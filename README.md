@@ -2,20 +2,6 @@
 
 Single image super resolution algorithm implementation (in progress)
 
-## Demo:
-
-### Source(128X128)
-
-![Source(128X128):](test_data/babyface_4.png)
-
-### 4X
-
-![4X](test_data/babyface_4x.png)
-
-Project Home Page [here](https://schen59.github.io/#/SRLab)
-
-More Project [Demo](http://shaofeng_2010.gegahost.net/SR/SingleImgSR.html)
-
 ## Requirement:
 * Supported python version 2.7
 
