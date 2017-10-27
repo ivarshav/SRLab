@@ -5,7 +5,6 @@ from sr_util import sr_image_util
 
 
 class SRImage(object):
-
     def __init__(self, y_data, cb_data=None, cr_data=None):
 
         self._y_data = y_data
@@ -73,18 +72,18 @@ class SRImage(object):
         blurred_image = sr_image_util.filter(upgraded_image, kernel)
         return SRImage(blurred_image, self._cb_data, self._cr_data)
 
-    def downgrade(self, size, kernel):
-        """
-        Downgraded the image to given size and blurred with given kernel.
-
-        @param size: target downgrade size
-        @param kernel: blur kernel
-        @return: downgraded image
-        @rtype: L{SRImage}
-        """
-        blurred_image = sr_image_util.filter(self._y_data, kernel)
-        downgraded_image = sr_image_util.resize(blurred_image, size)
-        return SRImage(downgraded_image, self._cb_data, self._cr_data)
+    # def downgrade(self, size, kernel):
+    #     """
+    #     Downgraded the image to given size and blurred with given kernel.
+    #
+    #     @param size: target downgrade size
+    #     @param kernel: blur kernel
+    #     @return: downgraded image
+    #     @rtype: L{SRImage}
+    #     """
+    #     blurred_image = sr_image_util.filter(self._y_data, kernel)
+    #     downgraded_image = sr_image_util.resize(blurred_image, size)
+    #     return SRImage(downgraded_image, self._cb_data, self._cr_data)
 
     def _downgrade(self, ratio, kernel):
         """
@@ -97,7 +96,7 @@ class SRImage(object):
         @return: downgraded image with same size as original image
         @rtype: L{sr_image.SRImage}
         """
-        size = sr_image_util.create_size(self.size, 1.0/ratio)
+        size = sr_image_util.create_size(self.size, 1.0 / ratio)
         blurred_image = sr_image_util.filter(self._y_data, kernel)
         downgraded_image = sr_image_util.resize(blurred_image, size)
         downgraded_image = sr_image_util.resize(downgraded_image, self._size)
@@ -157,5 +156,3 @@ class SRImage(object):
         my_image_data = self._y_data
         image_data = my_image_data * factor
         return SRImage(image_data, self._cb_data, self._cr_data)
-
-
