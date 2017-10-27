@@ -76,20 +76,16 @@ class ICCV09(object):
 
     def update_kernel(self, high_res_patches, low_res_patches):
         print "hi"
-        # high_lines = high_res_patches[:5]
-        # low_lines = low_res_patches[:5]
-        # print high_lines.shape
-        # print low_lines.shape
-        # k = numpy.linalg.solve(high_lines, low_lines)
-        # print k
-        a = high_res_patches[550:575]
-        b = low_res_patches[550:575]
-        # print a
-        # print "*******"
-        # print b
-        # print a.shape
-        # print b.shape
-        k = numpy.linalg.solve(a, b)
+        start = 550
+        high_lines = high_res_patches[start:start + 25]
+        low_lines = np.transpose(low_res_patches[start:start + 25][12:13])
+        unnormalized_kernel = np.linalg.lstsq(high_lines, low_lines)[0]
+        k = unnormalized_kernel / np.sum(unnormalized_kernel)
+        print "**"
+        print np.transpose(np.dot(high_lines, k))
+        print np.transpose(np.dot(high_lines, unnormalized_kernel))
+        print np.transpose(low_lines)
+        assert (np.dot(high_lines, unnormalized_kernel) == low_lines).any(), "hmm"
+        # assert np.dot(high_lines, low_lines) == k, "hmm"
         print k
-        self._kernel = numpy.reshape(k[0], (5, 5))
-        # self._kernel = self._kernel
+        kernel = np.reshape(k, (5, 5))
