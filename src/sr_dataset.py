@@ -1,11 +1,10 @@
-from sr_util import sr_image_util
-
-import numpy as np
-from sklearn.neighbors import NearestNeighbors
 import multiprocessing
 from multiprocessing import Process, Manager
 
-from sr_util.sr_image_util import foo
+import numpy as np
+from sklearn.neighbors import NearestNeighbors
+
+from sr_util import sr_image_util
 
 DEFAULT_PYRAMID_LEVEL = 3
 DEFAULT_DOWNGRADE_RATIO = 2 ** (1.0 / 3)
