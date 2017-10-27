@@ -1,7 +1,7 @@
 import math
 import sys
 
-import numpy
+import numpy as np
 
 from sr_util import profiler
 from src.sr_util import sr_image_util
@@ -36,7 +36,7 @@ class ICCV09(object):
 
         sr_dataset = SRDataSet.from_sr_image(sr_image)
         reconstructed_sr_image = sr_image
-        construct_level = int(math.log(ratio, ALPHA) + 0.5)
+        construct_level = 1  # int(math.log(ratio, ALPHA) + 0.5)
         r = ALPHA
         for level in range(construct_level):
             reconstructed_sr_image = self._reconstruct(r, reconstructed_sr_image, sr_dataset)
