@@ -3,7 +3,6 @@ import scipy.misc
 import scipy.ndimage.filters
 import scipy.ndimage.filters
 import scipy.ndimage.interpolation
-import scipy.optimize as optimization
 import scipy.signal
 from PIL import Image
 
@@ -29,16 +28,6 @@ def create_size(size, ratio):
     return new_size
 
 
-def compare_nn(high_res_patches, low_res_patches):
-    return np.linalg.solve(high_res_patches, low_res_patches)
-    # return high_res_patches, low_res_patches
-    # return np.array([10 * (x[1] - x[0]**2), (1 - x[0])])
-
-
-def foo(high_res_patches, low_res_patches):
-    return np.linalg.lstsq(high_res_patches, low_res_patches)
-
-
 # ****************
 def create_gaussian_kernel(radius=2, sigma=1.0):
     """
@@ -51,11 +40,9 @@ def create_gaussian_kernel(radius=2, sigma=1.0):
     :return: a normalized gaussian kernel
     :rtype: L{numpy.array}
     """
-    print radius, sigma
     y, x = np.mgrid[-radius:radius + 1, -radius:radius + 1]
     unnormalized_kernel = np.exp(-(x ** 2 + y ** 2) // (2 * sigma * sigma))
-    a =  unnormalized_kernel / np.sum(unnormalized_kernel)
-    return a
+    return unnormalized_kernel / np.sum(unnormalized_kernel)
 
 
 def _valid_patch_size(patch_size):
@@ -251,8 +238,7 @@ def gaussian_kernel(radius=2, sigma=1.0):
     :return: gaussian kernel
     :rtype: L{numpy.array}
     """
-    gaussian_kernel = create_gaussian_kernel(radius, sigma)
-    return gaussian_kernel
+    return create_gaussian_kernel(radius, sigma)
 
 
 def decompose(image):
