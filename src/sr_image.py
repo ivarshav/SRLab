@@ -50,7 +50,8 @@ class SRImage(object):
         return SRImage(resized_image, self._cb_data, self._cr_data)
 
     def putdata(self, data):
-        """Update the SRImage instance by the given data.
+        """
+        Update the SRImage instance by the given data.
 
         @param data: two dimensional image data
         @type data: L{numpy.array}
@@ -61,7 +62,8 @@ class SRImage(object):
         self._y_data = data
 
     def upgrade(self, size, kernel):
-        """Upgrade the image to the given size and blurred with given kernel.
+        """
+        Upgrade the image to the given size and blurred with given kernel.
 
         @param size: target upgrade size
         @param kernel: blur kernel
@@ -116,14 +118,14 @@ class SRImage(object):
         pyramid = []
         r = 1.0
         ALPHA = 2 ** (1.0/3)
-        for i in range(level):
             r *= ratio
             gaussian_kernel = sr_image_util.gaussian_kernel(sigma=(ALPHA**i)/3.0)
             pyramid.append(self._downgrade(r, gaussian_kernel))
         return pyramid
 
     def patchify(self, patch_size, interval=1):
-        """Create an array of image patches with the given patch size.
+        """
+        Create an array of image patches with the given patch size.
 
         @param patch_size: size of the patch
         @type patch_size: two dimensional list of the patch size

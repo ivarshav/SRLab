@@ -16,4 +16,3 @@ class SRMethodFactory(object):
             return ICCV09()
         else:
             raise SRException("Unsupported SR Method Type:%s" % method_type)
-

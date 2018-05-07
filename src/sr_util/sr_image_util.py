@@ -15,7 +15,8 @@ ALPHA = 2 ** (1.0 / 3)
 
 
 def create_size(size, ratio):
-    """Create a new size which the new size equals size*ratio.
+    """
+    Create a new size which the new size equals size*ratio.
 
     @param size: original size
     @type size: list
@@ -46,7 +47,8 @@ def create_gaussian_kernel(radius=2, sigma=1.0):
 
 
 def _valid_patch_size(patch_size):
-    """Check if the given patch size is valid. A valid patch size should be odd square with two dimension.
+    """
+    Check if the given patch size is valid. A valid patch size should be odd square with two dimension.
 
     @param patch_size: size of the patch
     @type patch_size: list
@@ -61,7 +63,8 @@ def _valid_patch_size(patch_size):
 
 
 def _valid_patch_dimension(patch_dimension):
-    """Check if the given patch dimension is valid or not. A patch dimension is the size of the flatten patch.
+    """
+    Check if the given patch dimension is valid or not. A patch dimension is the size of the flatten patch.
 
     @param patch_dimension:
     @type patch_dimension: int
@@ -81,7 +84,8 @@ def get_pad_size(height, width, patch_width, interval):
 
 
 def patchify(array, patch_size, interval=1):
-    """Create a list of patches by sampling the given array in row-major order with the given patch size
+    """
+    Create a list of patches by sampling the given array in row-major order with the given patch size
     and interval between patches.
 
     @param array: given array to patchify
@@ -165,7 +169,8 @@ def unpatchify(patches, output_array_size, kernel, overlap=1):
 
 
 def normalize(array):
-    """Normalize the row vector of a 2D array.
+    """
+    Normalize the row vector of a 2D array.
 
     @param array: 2D array
     @type array: L{numpy.array}
@@ -189,7 +194,8 @@ def get_patches_without_dc(sr_image, patch_size=DEFAULT_PATCH_SIZE, interval=1):
 
 
 def get_patches_from(sr_image, patch_size=DEFAULT_PATCH_SIZE, interval=1):
-    """Get patches without dc as well as dc from the given SRImage.
+    """
+    Get patches without dc as well as dc from the given SRImage.
 
     @param sr_image: an instance of SRImage
     @type sr_image: L{sr_image.SRImage}
@@ -202,7 +208,8 @@ def get_patches_from(sr_image, patch_size=DEFAULT_PATCH_SIZE, interval=1):
 
 
 def get_dc(patches):
-    """Get the dc component of the row major order patches.
+    """
+    Get the dc component of the row major order patches.
 
     @param patches: row major order patches
     @type patches: L{numpy.array}

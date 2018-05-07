@@ -54,7 +54,8 @@ class SRDataSet(object):
         self._need_update = False
 
     def add(self, low_res_patches, high_res_patches):
-        """Add low_res_patches -> high_res_patches mapping to the dataset.
+        """
+        Add low_res_patches -> high_res_patches mapping to the dataset.
 
         @param low_res_patches: low resolution patches
         @type low_res_patches: L{numpy.array}

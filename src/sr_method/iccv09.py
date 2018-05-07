@@ -38,7 +38,7 @@ class ICCV09(object):
         reconstructed_sr_image = sr_image
         construct_level = 1  # int(math.log(ratio, ALPHA) + 0.5)
         r = ALPHA
-        for level in range(construct_level):
+        for level in xrange(construct_level):
             reconstructed_sr_image = self._reconstruct(r, reconstructed_sr_image, sr_dataset)
             reconstructed_sr_image = sr_image_util.back_project(reconstructed_sr_image, sr_image, 3, level + 1)
             new_sr_dataset = SRDataSet.from_sr_image(reconstructed_sr_image)
