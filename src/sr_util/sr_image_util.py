@@ -7,6 +7,7 @@ import scipy.signal
 from PIL import Image
 
 from sr_exception.sr_exception import SRException
+from sr_util.kernel import Kernel
 
 DEFAULT_PATCH_SIZE = [5, 5]
 INVALID_PATCH_SIZE_ERR = "Invalid patch size %s, patch should be square with odd size."
@@ -43,7 +44,34 @@ def create_gaussian_kernel(radius=2, sigma=1.0):
     """
     y, x = np.mgrid[-radius:radius + 1, -radius:radius + 1]
     unnormalized_kernel = np.exp(-(x ** 2 + y ** 2) // (2 * sigma * sigma))
-    return unnormalized_kernel / np.sum(unnormalized_kernel)
+    kernel = unnormalized_kernel / np.sum(unnormalized_kernel)
+    return Kernel(kernel, radius, sigma, sigma)
+
+
+def create_asymmetric_gaussian_kernel(x, y, radius=2, sigma_x=1.0, sigma_y=1.0, theta=0):
+    """
+    Create a 2D asymmetric gaussian kernel.
+
+    :param radius: the radius of the kernel
+    :type radius: int
+    :param sigma_x: the sigma_x of the kernel
+    :type sigma_x: float
+    :param sigma_y: the sigma_y of the kernel
+    :type sigma_y: float
+    :param theta: the angle of the kernel
+    :type theta: float
+    :return: a normalized gaussian kernel
+    :rtype: L{numpy.array}
+    """
+    from astropy.modeling.models import Gaussian2D
+
+    x0 = float(0)
+    y0 = float(0)
+    unnormalized_kernel = Gaussian2D(amplitude=1, x_mean=x0, y_mean=y0, x_stddev=sigma_x, y_stddev=sigma_y,
+                                     theta=theta).evaluate(x, y, amplitude=1, x_mean=x0, y_mean=y0, x_stddev=sigma_x,
+                                                           y_stddev=sigma_y, theta=theta)
+    kernel = unnormalized_kernel / np.sum(unnormalized_kernel)
+    return Kernel(kernel, radius, sigma_x, sigma_y, theta)
 
 
 def _valid_patch_size(patch_size):
@@ -224,9 +252,9 @@ def get_dc(patches):
 
 def back_project(high_res_sr_img, low_res_sr_img, iteration, level):
     sigma = (ALPHA ** level) / 3.0
-    g_kernel = gaussian_kernel(sigma=sigma)
+    g_kernel = asymmetric_gaussian_kernel(sigma_x=sigma, sigma_y=sigma, theta=0)
     back_projected_sr_img = high_res_sr_img
-    for i in range(iteration):
+    for i in xrange(iteration):
         downgraded_sr_image = back_projected_sr_img.downgrade(low_res_sr_img.size, g_kernel)
         diff_sr_image = low_res_sr_img - downgraded_sr_image
         upgraded_diff_sr_image = diff_sr_image.upgrade(back_projected_sr_img.size, g_kernel)
@@ -245,7 +273,26 @@ def gaussian_kernel(radius=2, sigma=1.0):
     :return: gaussian kernel
     :rtype: L{numpy.array}
     """
-    return create_gaussian_kernel(radius, sigma)
+    return create_gaussian_kernel(radius, sigma).kernel
+
+
+def asymmetric_gaussian_kernel(radius=2, sigma_x=1.0, sigma_y=1.0, theta=0):
+    """
+    Create an asymmetric gaussian kernel with the given radius, sigma and theta. Only support radius=1, 2.
+
+    :param radius: radius for gaussian kernel
+    :type radius: int
+    :param sigma_x: the sigma_x of the kernel
+    :type sigma_x: float
+    :param sigma_y: the sigma_y of the kernel
+    :type sigma_y: float
+    :param theta: the angle of the kernel
+    :type theta: float
+    :return: gaussian kernel
+    :rtype: L{numpy.array}
+    """
+    y, x = np.mgrid[-radius:radius + 1, -radius:radius + 1]
+    return create_asymmetric_gaussian_kernel(x, y, radius, sigma_x, sigma_y, theta).kernel
 
 
 def decompose(image):
