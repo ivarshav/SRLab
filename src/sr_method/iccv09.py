@@ -4,6 +4,7 @@ import sys
 import numpy as np
 
 from sr_util import profiler
+from sr_util.kernel import Kernel
 from src.sr_util import sr_image_util
 from sr_dataset import SRDataSet
 
@@ -14,8 +15,7 @@ ALPHA = 2 ** (1.0 / 3)
 class ICCV09(object):
     def __init__(self):
         self._method_type = "iccv09"
-        self._kernel = None
-        # self._kernel = sr_image_util.create_gaussian_kernel()
+        self._kernel = sr_image_util.create_gaussian_kernel()
 
     def get_method_type(self):
         return self._method_type
@@ -67,9 +67,7 @@ class ICCV09(object):
         patches_without_dc, patches_dc = sr_image_util.get_patches_from(resized_sr_image, interval=4)
         high_res_patches_without_dc = sr_dataset.query(patches_without_dc)
         high_res_patches = high_res_patches_without_dc + patches_dc
-        if self._kernel is None:
-            self._kernel = sr_image_util.create_gaussian_kernel()
-        high_res_data = sr_image_util.unpatchify(high_res_patches, resized_sr_image.size, self._kernel)
+        high_res_data = sr_image_util.unpatchify(high_res_patches, resized_sr_image.size, self._kernel.kernel)
         self.update_kernel(high_res_patches, patches_dc)
         resized_sr_image.putdata(high_res_data)
         return resized_sr_image
