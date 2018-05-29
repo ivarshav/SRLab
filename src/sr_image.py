@@ -74,18 +74,18 @@ class SRImage(object):
         blurred_image = sr_image_util.filter(upgraded_image, kernel)
         return SRImage(blurred_image, self._cb_data, self._cr_data)
 
-    # def downgrade(self, size, kernel):
-    #     """
-    #     Downgraded the image to given size and blurred with given kernel.
-    #
-    #     @param size: target downgrade size
-    #     @param kernel: blur kernel
-    #     @return: downgraded image
-    #     @rtype: L{SRImage}
-    #     """
-    #     blurred_image = sr_image_util.filter(self._y_data, kernel)
-    #     downgraded_image = sr_image_util.resize(blurred_image, size)
-    #     return SRImage(downgraded_image, self._cb_data, self._cr_data)
+    def downgrade(self, size, kernel):
+        """
+        Downgraded the image to given size and blurred with given kernel.
+
+        @param size: target downgrade size
+        @param kernel: blur kernel
+        @return: downgraded image
+        @rtype: L{SRImage}
+        """
+        blurred_image = sr_image_util.filter(self._y_data, kernel)
+        downgraded_image = sr_image_util.resize(blurred_image, size)
+        return SRImage(downgraded_image, self._cb_data, self._cr_data)
 
     def _downgrade(self, ratio, kernel):
         """
@@ -117,9 +117,11 @@ class SRImage(object):
         """
         pyramid = []
         r = 1.0
-        ALPHA = 2 ** (1.0/3)
+        ALPHA = 2 ** (1.0 / 3)
+        for i in xrange(level):
             r *= ratio
-            gaussian_kernel = sr_image_util.gaussian_kernel(sigma=(ALPHA**i)/3.0)
+            gaussian_kernel = sr_image_util.asymmetric_gaussian_kernel(sigma_x=(ALPHA ** i) / 3.0,
+                                                                       sigma_y=(ALPHA ** i) / 3.0, theta=0)
             pyramid.append(self._downgrade(r, gaussian_kernel))
         return pyramid
 
