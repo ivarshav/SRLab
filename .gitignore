@@ -3,3 +3,5 @@
 .idea
 
 src/test_data/
+
+tests/\.pytest_cache/v/cache/
