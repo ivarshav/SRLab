@@ -1,10 +1,10 @@
-from src.sr_factory import sr_image_factory
-
-__author__ = 'Sherwin'
+import unittest
 
 import numpy as np
+
 from sr_dataset import SRDataSet
-import unittest
+from src.sr_factory import sr_image_factory
+
 
 class TestSRDataset(unittest.TestCase):
 

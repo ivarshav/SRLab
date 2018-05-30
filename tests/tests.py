@@ -1,4 +1,3 @@
-__author__ = 'Sherwin'
 import unittest
 
 if __name__ == '__main__':

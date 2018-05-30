@@ -1,5 +1,3 @@
-__author__ = 'Sherwin'
-
 import unittest
 
 import numpy as np
