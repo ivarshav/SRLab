@@ -1,41 +1,26 @@
-import numpy as np
-import pytest
-from PIL import Image
 from scipy.optimize import curve_fit
 
-from sr_factory.sr_image_factory import SRImageFactory
-from sr_util import sr_image_util
-from sr_util.sr_image_util import gaussian_kernel
+from .fixtures import *
 
-RADIUS = 2
 NOISE = 5
 
 
-@pytest.fixture
-def sr_image():
-    image = Image.open("test_data/letter.png")
-    sr_image = SRImageFactory.create_sr_image(image)
-    return sr_image
-
-
-@pytest.fixture
-def high_lines(sr_image):
-    """
-
-    :param sr_image:
-    :return: 25 by 25 array
-    """
-    high_res_patches, _ = sr_image_util.get_patches_from(sr_image, interval=4)
-    start = 550
-    return high_res_patches[start:start + 25]
-
-
-@pytest.fixture
-def kernel():
-    return gaussian_kernel()
+def test_lstsq_default(kernel):
+    from random import randint
+    high_lines = np.ndarray((25, 25))
+    for i in xrange(len(high_lines)):
+        for j in xrange(len(high_lines[0])):
+            high_lines[i][j] = randint(0, 255)
+    flatten_kernel = kernel.ravel()
+    low_lines = np.dot(high_lines, flatten_kernel)
+    unnormalized_kernel = np.linalg.lstsq(high_lines, low_lines)[0]
+    k = unnormalized_kernel / np.sum(unnormalized_kernel)
+    k = np.reshape(k, (5, 5))
+    np.testing.assert_array_almost_equal(kernel, k)
 
 
 def test_lstsq(high_lines, kernel):
+    print high_lines
     flatten_kernel = kernel.ravel()
     low_lines = np.dot(high_lines, flatten_kernel)
     unnormalized_kernel = np.linalg.lstsq(high_lines, low_lines)[0]
@@ -44,32 +29,6 @@ def test_lstsq(high_lines, kernel):
     print kernel
     print k
     np.testing.assert_array_almost_equal(kernel, k)
-
-
-@pytest.fixture
-def sigma_x():
-    return 1.0
-
-
-@pytest.fixture
-def sigma_y():
-    return 1.0
-
-
-@pytest.fixture
-def theta():
-    return 15
-
-
-@pytest.fixture
-def x_y(radius=RADIUS):
-    y, x = np.mgrid[-radius:radius + 1, -radius:radius + 1]
-    return x, y
-
-
-@pytest.fixture
-def twoD_kernel(x_y, sigma_x, sigma_y, theta):
-    return sr_image_util.twoD_gaussian(x_y, sigma_x, sigma_y, theta)
 
 
 def test_fit_dafault(twoD_kernel, x_y, sigma_x, sigma_y, theta):
