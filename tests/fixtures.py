@@ -25,7 +25,7 @@ def high_lines(sr_image):
     """
     high_res_patches, _ = sr_image_util.get_patches_from(sr_image, interval=4)
     start = 550
-    return abs(high_res_patches[start:start + 25])
+    return high_res_patches[start:start + 25]
 
 
 @pytest.fixture
