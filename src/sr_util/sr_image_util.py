@@ -74,6 +74,31 @@ def create_asymmetric_gaussian_kernel(x, y, radius=2, sigma_x=1.0, sigma_y=1.0, 
     return Kernel(kernel, radius, sigma_x, sigma_y, theta)
 
 
+def twoD_gaussian((x, y), sigma_x, sigma_y, theta=0):
+    """
+    Create a raveled 2D asymmetric gaussian kernel.
+    Used for `curve_fit` method in `update_kernel` function.
+    :note: x0 and y0 are consts initialized to zero
+
+    :param sigma_x: the sigma_x of the kernel
+    :type sigma_x: float
+    :param sigma_y: the sigma_y of the kernel
+    :type sigma_y: float
+    :param theta: the angle of the kernel
+    :type theta: float
+    :return: a flatten normalized gaussian kernel
+    :rtype: L{numpy.array}
+    """
+    x0 = float(0)
+    y0 = float(0)
+    a = (np.cos(theta) ** 2) / (2 * sigma_x ** 2) + (np.sin(theta) ** 2) / (2 * sigma_y ** 2)
+    b = -(np.sin(2 * theta)) / (4 * sigma_x ** 2) + (np.sin(2 * theta)) / (4 * sigma_y ** 2)
+    c = (np.sin(theta) ** 2) / (2 * sigma_x ** 2) + (np.cos(theta) ** 2) / (2 * sigma_y ** 2)
+    gaussian = np.exp(- (a * ((x - x0) ** 2) + 2 * b * (x - x0) * (y - y0) + c * ((y - y0) ** 2)))
+    g = gaussian / np.sum(gaussian)
+    return g.ravel()
+
+
 def _valid_patch_size(patch_size):
     """
     Check if the given patch size is valid. A valid patch size should be odd square with two dimension.
