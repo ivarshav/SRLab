@@ -73,6 +73,13 @@ class ICCV09(object):
         return resized_sr_image
 
     def update_kernel(self, high_res_patches, low_res_patches):
+        """
+
+        :param high_res_patches: high resolution patches from the given low resolution patches
+        :type high_res_patches: L{numpy.array}
+        :param low_res_patches: low resolution patches
+        :type low_res_patches: L{numpy.array}
+        """
         print "hi"
         start = 550
         high_lines = high_res_patches[start:start + 25]
