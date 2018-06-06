@@ -1,14 +1,11 @@
-from sr_util.sr_image_util import decompose
-
-__author__ = 'Sherwin'
 
 from PIL import Image
 
 from sr_image import SRImage
+from sr_util.sr_image_util import decompose
 
 
 class SRImageFactory(object):
-
     @classmethod
     def create_sr_image_from(cls, image_path):
         """
