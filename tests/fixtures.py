@@ -23,9 +23,10 @@ def high_lines(sr_image):
     :param sr_image:
     :return: 25 by 25 array
     """
-    high_res_patches, _ = sr_image_util.get_patches_from(sr_image, interval=4)
+    high_res_patches, dc_patches = sr_image_util.get_patches_from(sr_image, interval=4)
+    high_res_patches = high_res_patches + dc_patches
     start = 550
-    return high_res_patches[start:start + 25]
+    return high_res_patches[start:start + 200]
 
 
 @pytest.fixture

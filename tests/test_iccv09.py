@@ -11,6 +11,7 @@ def test_lstsq_default(kernel):
     for i in xrange(len(high_lines)):
         for j in xrange(len(high_lines[0])):
             high_lines[i][j] = randint(0, 255)
+
     flatten_kernel = kernel.ravel()
     low_lines = np.dot(high_lines, flatten_kernel)
     unnormalized_kernel = np.linalg.lstsq(high_lines, low_lines)[0]
@@ -25,7 +26,7 @@ def test_lstsq(high_lines, kernel):
     unnormalized_kernel = np.linalg.lstsq(high_lines, low_lines)[0]
     k = unnormalized_kernel / np.sum(unnormalized_kernel)
     k = np.reshape(k, (5, 5))
-    assert sum(sum(map(lambda x: x * x, kernel)) - sum(map(lambda x: x * x, k))) < 0.5
+    np.testing.assert_array_almost_equal(kernel, k)
 
 
 def test_fit_default(twoD_kernel, x_y, sigma_x, sigma_y, theta):
