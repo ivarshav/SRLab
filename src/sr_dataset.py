@@ -12,16 +12,20 @@ DEFAULT_NEIGHBORS = 9
 
 
 class SRDataSet(object):
-    def __init__(self, low_res_patches, high_res_patches, neighbors=DEFAULT_NEIGHBORS):
+    def __init__(self, low_res_patches, high_res_patches, neighbors=DEFAULT_NEIGHBORS, kernel=None):
         self._low_res_patches = low_res_patches
         self._high_res_patches = high_res_patches
         self._nearest_neighbor = None
         self._neighbors = neighbors
         self._need_update = True
+        radius = 2
+        y, x = np.mgrid[-radius:radius + 1, -radius:radius + 1]
+        self._kernel = kernel or sr_image_util.create_asymmetric_gaussian_kernel(x, y, theta=5)
         self._update()
 
     @classmethod
-    def from_sr_image(cls, sr_image, pyramid_level=DEFAULT_PYRAMID_LEVEL, downgrade_ratio=DEFAULT_DOWNGRADE_RATIO):
+    def from_sr_image(cls, sr_image, pyramid_level=DEFAULT_PYRAMID_LEVEL, downgrade_ratio=DEFAULT_DOWNGRADE_RATIO,
+                      kernel=None):
         """
         Create a SRDataset object from a SRImage object.
 
@@ -32,10 +36,10 @@ class SRDataSet(object):
         """
         high_res_patches = sr_image_util.get_patches_without_dc(sr_image)
         sr_dataset = None
-        for downgraded_sr_image in sr_image.get_pyramid(pyramid_level, downgrade_ratio):
+        for downgraded_sr_image in sr_image.get_pyramid(pyramid_level, downgrade_ratio, kernel):
             low_res_patches = sr_image_util.get_patches_without_dc(downgraded_sr_image)
             if sr_dataset is None:
-                sr_dataset = SRDataSet(low_res_patches, high_res_patches)
+                sr_dataset = SRDataSet(low_res_patches, high_res_patches, kernel=kernel)
             else:
                 sr_dataset.add(low_res_patches, high_res_patches)
         return sr_dataset
@@ -120,10 +124,9 @@ class SRDataSet(object):
         """
         if self._need_update:
             self._update()
-        distances, indices = self._nearest_neighbor.kneighbors(low_res_patches,
-                                                               n_neighbors=self._neighbors)
+        distances, indices = self._nearest_neighbor.kneighbors(low_res_patches, n_neighbors=self._neighbors)
+
         neighbor_patches = self.high_res_patches[indices]
-        print neighbor_patches.shape
         high_res_patches = self._merge_high_res_patches(neighbor_patches, distances) if \
             self._neighbors > 1 else neighbor_patches
         print "high", high_res_patches.shape
