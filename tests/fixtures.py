@@ -58,3 +58,8 @@ def x_y(radius=RADIUS):
 @pytest.fixture
 def twoD_kernel(x_y, sigma_x, sigma_y, theta):
     return sr_image_util.twoD_gaussian(x_y, sigma_x, sigma_y, theta)
+
+
+@pytest.fixture
+def asymmetric_kernel(sigma_x, sigma_y, theta, radius=RADIUS):
+    return sr_image_util.asymmetric_gaussian_kernel(radius, sigma_x, sigma_y, theta)
