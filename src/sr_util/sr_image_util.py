@@ -275,9 +275,15 @@ def get_dc(patches):
     return patches_dc
 
 
-def back_project(high_res_sr_img, low_res_sr_img, iteration, level):
-    sigma = (ALPHA ** level) / 3.0
-    g_kernel = asymmetric_gaussian_kernel(sigma_x=sigma, sigma_y=sigma, theta=0)
+def back_project(high_res_sr_img, low_res_sr_img, iteration, level, kernel_params=None):
+    sigma_x = (ALPHA ** level) / 3.0
+    sigma_y = (ALPHA ** level) / 3.0
+    theta = 0
+    if kernel_params:
+        sigma_x = kernel_params.sigma_x * (ALPHA ** level)
+        sigma_y = kernel_params.sigma_y * (ALPHA ** level)
+        theta = kernel_params.theta
+    g_kernel = asymmetric_gaussian_kernel(sigma_x=sigma_x, sigma_y=sigma_y, theta=theta)
     back_projected_sr_img = high_res_sr_img
     for i in xrange(iteration):
         downgraded_sr_image = back_projected_sr_img.downgrade(low_res_sr_img.size, g_kernel)
