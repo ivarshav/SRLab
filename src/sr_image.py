@@ -104,7 +104,7 @@ class SRImage(object):
         downgraded_image = sr_image_util.resize(downgraded_image, self._size)
         return SRImage(downgraded_image, self._cb_data, self._cr_data)
 
-    def get_pyramid(self, level, ratio):
+    def get_pyramid(self, level, ratio, kernel):
         """
         Get a pyramid of SR images from the original image.
 
@@ -118,10 +118,15 @@ class SRImage(object):
         pyramid = []
         r = 1.0
         ALPHA = 2 ** (1.0 / 3)
+        sigma_x, sigma_y, theta = kernel.sigma_x, kernel.sigma_y, kernel.theta
         for i in xrange(level):
             r *= ratio
-            gaussian_kernel = sr_image_util.asymmetric_gaussian_kernel(sigma_x=(ALPHA ** i) / 3.0,
-                                                                       sigma_y=(ALPHA ** i) / 3.0, theta=0)
+            sigma_x *= ALPHA
+            sigma_y *= ALPHA
+            gaussian_kernel = sr_image_util.asymmetric_gaussian_kernel(sigma_x=sigma_x / 3.0,
+                                                                       sigma_y=sigma_y / 3.0, theta=theta)
+            # gaussian_kernel = sr_image_util.asymmetric_gaussian_kernel(sigma_x=(ALPHA ** i) / 3.0,
+            #                                                            sigma_y=(ALPHA ** i) / 3.0, theta=0)
             pyramid.append(self._downgrade(r, gaussian_kernel))
         return pyramid
 
