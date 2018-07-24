@@ -36,11 +36,9 @@ class ICCV09(object):
         :return: reconstructed SR image
         :rtype: L{sr_image.SRImage}
         """
-        # import matplotlib.pyplot as plt
-
         sr_dataset = SRDataSet.from_sr_image(sr_image, kernel=self._kernel)
         reconstructed_sr_image = sr_image
-        construct_level = 1  # int(math.log(ratio, ALPHA) + 0.5)
+        construct_level = int(math.log(ratio, ALPHA) + 0.5)
         r = ALPHA
         for level in xrange(construct_level):
             reconstructed_sr_image = self._reconstruct(r, reconstructed_sr_image, sr_dataset)
@@ -80,10 +78,15 @@ class ICCV09(object):
 
     def pick_best(self, high_res_patches, low_res_patches):
         """
+        Pick best tuple of (`high_res_patches`, `low_res_patches`) such that they maximize the sum of squared differences,
+        until we get matrix rank that matches `RANK SIZE`.
 
-        :param high_res_patches:
-        :param low_res_patches: 
-        :return:
+        :param high_res_patches: high resolution patches from the given low resolution patches
+        :type high_res_patches: L{numpy.array}
+        :param low_res_patches: low resolution patches
+        :type low_res_patches: L{numpy.array}
+        :return: A list of best tuples
+        :rtype: tuple(np.array(L{numpy.array}),np.array(L{numpy.array}))
         """
         RANK_SIZE = 25
         high_patches, low_patches = [], []
@@ -98,6 +101,7 @@ class ICCV09(object):
 
     def update_kernel(self, high_res_patches, low_res_patches):
         """
+        Update kernel using lstsq and curve_fit, in order to get closer to the real kernel of the image.
 
         :param high_res_patches: high resolution patches from the given low resolution patches
         :type high_res_patches: L{numpy.array}
@@ -106,15 +110,19 @@ class ICCV09(object):
         """
         print "hi"
         start = 550
-        high_lines = high_res_patches[start:start + 25]
-        low_lines = np.transpose(low_res_patches[start:start + 25][12:13])
+        diff = 75
+        high_lines = high_res_patches[start:start + diff]
+        low_lines = np.transpose(np.transpose(low_res_patches[start:start + diff])[12:13])
         unnormalized_kernel = np.linalg.lstsq(high_lines, low_lines)[0]
         k = unnormalized_kernel / np.sum(unnormalized_kernel)
-        print "**"
-        print np.transpose(np.dot(high_lines, k))
-        print np.transpose(np.dot(high_lines, unnormalized_kernel))
-        print np.transpose(low_lines)
-        assert (np.dot(high_lines, unnormalized_kernel) == low_lines).any(), "hmm"
-        # assert np.dot(high_lines, low_lines) == k, "hmm"
-        print k
-        kernel = np.reshape(k, (5, 5))
+
+        radius = self._kernel.radius
+        y, x = np.mgrid[-radius:radius + 1, -radius:radius + 1]
+
+        xdata = np.vstack((x.ravel(), y.ravel()))
+        popt, pcov = curve_fit(twoD_gaussian, xdata, ydata=k.ravel(),
+                               p0=[self._kernel.sigma_x, self._kernel.sigma_y, self._kernel.theta])
+        fitted_kernel = twoD_gaussian((x, y), *popt)
+
+        kernel = np.reshape(fitted_kernel, (5, 5))
+        self._kernel = Kernel(kernel, radius, *popt)
