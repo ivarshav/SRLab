@@ -1,0 +1,50 @@
+
+bush_original.png:
+	input kernel:
+		sigma_x = 1.0 sigma_y = 3.0 theta = 15
+	output kernel:
+		sigma_x = 0.21082779176 sigma_y = 1.08786930053 theta = 29.8630515474
+
+earth_original.png:
+	input kernel:
+		sigma_x = 1.0 sigma_y = 3.0 theta = 15
+	output kernel:
+		sigma_x = 4.02599205276 sigma_y = 0.794018979536 theta = 4.71497923225
+
+
+sculpture.png:
+	input kernel:
+		sigma_x = 1.0 sigma_y = 3.0 theta = 15
+	output kernel:
+		sigma_x = 1.36770050596 sigma_y = 0.432471270664 theta = 11.5080997539
+
+butterfly.png:
+	input kernel:
+		sigma_x = 1.0 sigma_y = 3.0 theta = 15
+
+freckles2.png:
+	input kernel:
+		sigma_x = 1.0 sigma_y = 3.0 theta = 15
+	output kernel:
+		sigma_x = 2.23671556528 sigma_y = 0.146790359236 theta = 6.31433993721
+
+flowerfield.png:
+	input kernel:
+		sigma_x = 1.0 sigma_y = 3.0 theta = 15
+	output kernel:
+		sigma_x = 1.54695809394 sigma_y = 0.140982983296 theta = 22.7787042801
+
+earth_original.png:
+	input kernel:
+		sigma_x = 1.0 sigma_y = 3.0 theta = 15
+	output kernel:
+		sigma_x = 28.7361590944 sigma_y = 28.736166655 theta = 12.1301899034
+
+
+flowerfield.png:
+	input kernel:
+		sigma_x = 1.0 sigma_y = 3.0 theta = 15
+
+tree_original.png:
+	input kernel:
+		sigma_x = 1.0 sigma_y = 3.0 theta = 15
