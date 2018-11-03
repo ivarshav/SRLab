@@ -5,3 +5,11 @@
 src/test_data/
 
 tests/\.pytest_cache/v/cache/
+
+tests/test_data/examples/
+
+tests/test_data/grass/
+
+tests/test_data/pics/
+
+tests/test_data/tmp/
